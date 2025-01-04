@@ -27,28 +27,38 @@ class ContractInfo():
         self.SALARY_BYNUM=None
         self.SALARY_DATE=None
         self.CONTRACT_TEXT= util.OCRtext2Text(file_path)
-    def ChooseBestInfo(self,results,limit_phrases,find_length):
+    def ChooseBestInfo(self, results, limit_phrases, find_length):
         '''
-        :param results: 候选字段级
+        :param results: 候选字段列表
         :param limit_phrases: 约束字段集合
         :param find_length:  搜索范围
         :return:    最符合的字段
         '''
         for i in results:
-            flag=0
-            index=self.CONTRACT_TEXT.find(i)
-            if index-find_length<=0:
-                sub_text=self.CONTRACT_TEXT[0:index+find_length+len(i)]
+            # 初始化标志位为0，表示当前字段可能符合约束条件
+            flag = 0
+            # 在合同文本中查找当前字段的起始索引
+            index = self.CONTRACT_TEXT.find(i)
+            # 如果当前字段在合同文本的前find_length个字符内，则截取从文本开头到字段末尾加find_length长度的子文本
+            if index - find_length <= 0:
+                sub_text = self.CONTRACT_TEXT[0:index + find_length + len(i)]
+            # 否则，截取字段前后各find_length长度的子文本
             else:
                 sub_text = self.CONTRACT_TEXT[index - find_length:index + find_length + len(i)]
+            # 遍历约束字段集合
             for k in limit_phrases:
+                # 遍历每个约束字段集合中的元素
                 for j in k:
+                    # 如果子文本中不包含当前约束字段，则将标志位置为1并跳出内层循环
                     if j not in sub_text:
-                        flag=1
+                        flag = 1
                         break
-                if flag==0:
+                # 如果当前字段符合所有约束条件（即flag仍为0），则返回该字段
+                if flag == 0:
                     return i
+        # 如果没有字段符合所有约束条件，则返回"none"
         return "none"
+
 
 
     def getPROBATION_MONEY(self):
